@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXUS v3 — Real-Time Market Intelligence</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#07080a;--bg2:#0e1015;--bg3:#14161d;--bg4:#1c1f2a;--bg5:#252836;--tx:#e8e9ed;--tx2:#9ca0af;--tx3:#5f6373;--red:#f43f5e;--green:#10b981;--amber:#f59e0b;--blue:#3b82f6;--cyan:#06b6d4;--violet:#8b5cf6;--red-bg:rgba(244,63,94,.08);--green-bg:rgba(16,185,129,.08);--amber-bg:rgba(245,158,11,.08);--blue-bg:rgba(59,130,246,.06);--border:rgba(255,255,255,.06);--border2:rgba(255,255,255,.1);--radius:10px}
+html{font-size:15px;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;scroll-behavior:smooth}body{background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden}::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:3px}a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+.hdr{position:sticky;top:0;z-index:100;background:rgba(7,8,10,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 24px}.hdr-in{max-width:1800px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:52px;flex-wrap:wrap;gap:8px}.logo{display:flex;align-items:center;gap:11px}.lm{width:28px;height:28px;position:relative;flex-shrink:0}.lm::before{content:'';position:absolute;inset:0;background:conic-gradient(from 180deg,var(--red),var(--amber),var(--green),var(--blue),var(--red));border-radius:6px;animation:ls 8s linear infinite}.lm::after{content:'N';position:absolute;inset:2px;background:var(--bg);border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:12px;color:#fff}@keyframes ls{to{filter:hue-rotate(360deg)}}.lt{font-family:'Playfair Display',serif;font-weight:900;font-size:18px;letter-spacing:-.5px;background:linear-gradient(to right,#fff,#999);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.hr{display:flex;align-items:center;gap:12px;flex-wrap:wrap}.pill{display:flex;align-items:center;gap:6px;padding:3px 10px;border-radius:16px;font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;background:var(--red-bg);border:1px solid rgba(244,63,94,.2);color:var(--red)}.pill .dot{width:6px;height:6px;background:var(--red);border-radius:50%;animation:bk 1.6s ease infinite}@keyframes bk{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(244,63,94,.5)}50%{opacity:.5;box-shadow:0 0 0 5px rgba(244,63,94,0)}}.clk{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--tx3)}.btn{background:var(--bg3);border:1px solid var(--border2);color:var(--tx2);padding:5px 12px;border-radius:6px;font-size:11px;font-family:'JetBrains Mono',monospace;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px}.btn:hover{background:var(--bg4);color:#fff}.btn svg{width:12px;height:12px}.btn.spin svg{animation:spin .6s ease}@keyframes spin{to{transform:rotate(360deg)}}
+.squawk{background:var(--bg2);border-bottom:1px solid var(--border);max-height:280px;overflow-y:auto}.squawk-head{display:flex;align-items:center;justify-content:space-between;padding:8px 24px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);z-index:5}.sq-title{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--cyan);letter-spacing:1px;display:flex;align-items:center;gap:6px}.sq-title .live{background:var(--red);color:#fff;padding:1px 6px;border-radius:8px;font-size:8px;font-weight:700;animation:bk 1.6s ease infinite}.sq-cnt{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--tx3)}.sq-item{display:flex;align-items:flex-start;gap:10px;padding:7px 24px;border-bottom:1px solid rgba(255,255,255,.03);font-size:13px;line-height:1.5}.sq-item:hover{background:rgba(255,255,255,.02)}.sq-item.hi{border-left:3px solid var(--red);padding-left:21px}.sq-item.new{animation:sqF .8s ease}@keyframes sqF{0%{background:rgba(6,182,212,.1)}100%{background:transparent}}.sq-time{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--tx3);min-width:45px;flex-shrink:0;padding-top:2px}.sq-text{color:var(--tx);flex:1}.sq-alert{display:inline-flex;background:var(--red-bg);border:1px solid rgba(244,63,94,.25);color:var(--red);padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700;font-family:'JetBrains Mono',monospace;margin-right:4px;animation:af 1s infinite}.sq-econ{display:inline-flex;background:var(--amber-bg);border:1px solid rgba(245,158,11,.25);color:var(--amber);padding:1px 6px;border-radius:3px;font-size:9px;font-weight:700;font-family:'JetBrains Mono',monospace;margin-right:4px}@keyframes af{0%,100%{opacity:1}50%{opacity:.4}}
+.nav{background:var(--bg);border-bottom:1px solid var(--border);padding:0 24px;position:sticky;top:52px;z-index:90}.nav-in{max-width:1800px;margin:0 auto;display:flex;overflow-x:auto;scrollbar-width:none}.nav-in::-webkit-scrollbar{display:none}.tab{padding:11px 16px;font-size:12px;font-weight:600;color:var(--tx3);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;letter-spacing:.8px;font-family:'JetBrains Mono',monospace;white-space:nowrap;display:flex;align-items:center;gap:6px}.tab:hover{color:var(--tx2)}.tab.active{color:#fff;border-bottom-color:var(--red)}.tab .cnt{background:var(--bg4);padding:2px 7px;border-radius:10px;font-size:9px;color:var(--tx3)}.tab.active .cnt{background:var(--red-bg);color:var(--red)}
+.main{max-width:1800px;margin:0 auto;padding:16px 24px;display:grid;grid-template-columns:1fr 370px;gap:18px}@media(max-width:1200px){.main{grid-template-columns:1fr}.sidebar{display:grid!important;grid-template-columns:1fr 1fr;gap:12px}}@media(max-width:700px){.main{padding:10px}.sidebar{grid-template-columns:1fr!important}}
+.sbar{margin-bottom:12px;position:relative}.sbar input{width:100%;background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px 10px 36px;font-size:13px;color:var(--tx);font-family:'DM Sans',sans-serif;outline:none}.sbar input:focus{border-color:var(--blue)}.sbar input::placeholder{color:var(--tx3)}.sbar svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--tx3)}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:8px;transition:all .2s;position:relative;overflow:hidden;cursor:pointer}.card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px}.card.imp-high::before{background:var(--red)}.card.imp-med::before{background:var(--amber)}.card.imp-low::before{background:var(--green)}.card:hover{border-color:var(--border2);transform:translateY(-1px);box-shadow:0 4px 20px rgba(0,0,0,.2)}.card.open{border-color:rgba(59,130,246,.25);background:var(--bg3)}.card-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:4px}.badges{display:flex;gap:4px;flex-wrap:wrap}.b{padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;font-family:'JetBrains Mono',monospace;text-transform:uppercase}.b-cat{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(59,130,246,.15)}.b-hi{background:var(--red-bg);color:var(--red);border:1px solid rgba(244,63,94,.15)}.b-md{background:var(--amber-bg);color:var(--amber);border:1px solid rgba(245,158,11,.15)}.b-lo{background:var(--green-bg);color:var(--green);border:1px solid rgba(16,185,129,.15)}.card-time{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--tx3)}.card-title{font-weight:700;font-size:15px;line-height:1.4;margin-bottom:5px}.card-src{font-size:12px;color:var(--tx3)}.card-src .sn{color:var(--cyan);font-weight:500}.card-sent{display:inline-flex;align-items:center;gap:3px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;margin-top:6px}.card-sent.bull{color:var(--green)}.card-sent.bear{color:var(--red)}.card-sent.neut{color:var(--tx3)}.card-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:7px}.tag{padding:2px 7px;background:var(--bg4);border:1px solid var(--border);border-radius:4px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--tx2)}.card-body{margin-top:12px;padding-top:12px;border-top:1px solid var(--border);display:none;animation:fadeIn .3s}.card.open .card-body{display:block}@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}.card-summary{font-size:13px;color:var(--tx2);line-height:1.7}.card-link{display:inline-block;margin-top:8px;font-size:12px;color:var(--blue)}.ai-box{margin-top:10px;background:rgba(59,130,246,.04);border:1px solid rgba(59,130,246,.12);border-radius:8px;padding:12px}.ai-head{font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:var(--blue);margin-bottom:5px}.ai-txt{font-size:12px;color:var(--tx2);line-height:1.7}
+.sidebar{display:flex;flex-direction:column;gap:12px}.panel{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}.panel-hd{padding:12px 14px;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:.7px;color:var(--tx2);display:flex;align-items:center;justify-content:space-between}.panel-hd .p2{font-size:9px;padding:2px 7px;border-radius:8px;background:var(--green-bg);color:var(--green)}.panel-bd{padding:12px 14px}
+.econ-ev{padding:8px 0;border-bottom:1px solid var(--border)}.econ-ev:last-child{border:none}.econ-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}.econ-name{font-size:12px;font-weight:600;color:var(--tx)}.econ-time{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--tx3)}.econ-co{font-size:9px;color:var(--cyan);font-family:'JetBrains Mono',monospace;font-weight:600;margin-bottom:3px}.econ-data{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;margin-top:4px}.econ-cell{text-align:center;padding:3px;border-radius:3px;background:var(--bg4);font-family:'JetBrains Mono',monospace}.econ-cl{font-size:7px;color:var(--tx3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:1px}.econ-cv{font-size:11px;font-weight:600;color:var(--tx)}.econ-cv.better{color:var(--green)}.econ-cv.worse{color:var(--red)}.econ-cv.pending{color:var(--tx3)}.econ-imp{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:3px}.econ-imp.High{background:var(--red)}.econ-imp.Medium{background:var(--amber)}.econ-imp.Low{background:var(--green)}.econ-released{display:inline-flex;background:var(--red-bg);border:1px solid rgba(244,63,94,.25);color:var(--red);padding:1px 6px;border-radius:3px;font-size:8px;font-weight:700;font-family:'JetBrains Mono',monospace;animation:af 1s infinite}
+.x-item{padding:8px 0;border-bottom:1px solid var(--border)}.x-item:last-child{border:none}.x-h{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:var(--cyan)}.x-t{font-size:12px;color:var(--tx2);line-height:1.5;margin-top:3px}
+.sources-strip{background:var(--bg2);border-top:1px solid var(--border);padding:10px 24px}.sources-in{max-width:1800px;margin:0 auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}.sl{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--tx3);letter-spacing:1px;text-transform:uppercase}.sc{padding:3px 9px;background:var(--bg3);border:1px solid var(--border);border-radius:4px;font-size:10px;font-family:'JetBrains Mono',monospace;color:var(--tx2)}
+.loading-overlay{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .5s}.loading-overlay.hidden{opacity:0;pointer-events:none}.loader-ring{width:36px;height:36px;border:3px solid var(--bg4);border-top-color:var(--red);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:14px}.loader-text{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--tx3);animation:lp 1.5s infinite}@keyframes lp{0%,100%{opacity:.5}50%{opacity:1}}.empty{padding:40px 20px;text-align:center;color:var(--tx3);font-family:'JetBrains Mono',monospace;font-size:11px}.footer{text-align:center;padding:16px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--tx3);border-top:1px solid var(--border);margin-top:16px}
+</style>
+</head>
+<body>
+<div class="loading-overlay" id="loader"><div class="loader-ring"></div><div class="loader-text">CONNECTING TO LIVE FEEDS...</div></div>
+<header class="hdr"><div class="hdr-in"><div class="logo"><div class="lm"></div><span class="lt">NEXUS</span></div><div class="hr"><div class="pill"><span class="dot"></span>LIVE</div><div class="clk" id="clock"></div><button class="btn" id="refreshBtn" onclick="refreshAll()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg><span id="rLbl">REFRESH</span></button></div></div></header>
+<div class="squawk" id="squawkPanel"><div class="squawk-head"><div class="sq-title">⚡ LIVE SQUAWK <span class="live">LIVE</span></div><div class="sq-cnt" id="sqCount">0</div></div><div id="squawkFeed"><div class="empty">Connecting...</div></div></div>
+<nav class="nav"><div class="nav-in" id="navTabs"></div></nav>
+<main class="main">
+<section><div class="sbar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="searchInput" placeholder="Search headlines, assets, topics..." oninput="handleSearch()"></div><div id="newsContainer"></div></section>
+<aside class="sidebar">
+<div class="panel"><div class="panel-hd">📅 ECONOMIC CALENDAR <span class="p2" id="ecPill">LOADING</span></div><div class="panel-bd" id="econCal" style="max-height:400px;overflow-y:auto"><div class="empty">Fetching Forex Factory calendar...</div></div></div>
+<div class="panel"><div class="panel-hd">&#x1D54F; INSTITUTIONAL <span class="p2">X</span></div><div class="panel-bd" id="xFeed" style="max-height:350px;overflow-y:auto"><div class="empty">Loading...</div></div></div>
+<div class="panel"><div class="panel-hd">IMPACT RADAR</div><div class="panel-bd" id="radar"></div></div>
+</aside>
+</main>
+<div class="sources-strip"><div class="sources-in"><span class="sl">Sources ▸</span><span class="sc">FinancialJuice</span><span class="sc">Forex Factory</span><span class="sc">Reuters</span><span class="sc">CNBC</span><span class="sc">BBC</span><span class="sc">MarketWatch</span><span class="sc">Yahoo Finance</span><span class="sc">Investing.com</span><span class="sc">Seeking Alpha</span><span class="sc">ForexLive</span><span class="sc">Federal Reserve</span><span class="sc">ECB</span><span class="sc">CNN Business</span><span class="sc">Al Jazeera</span><span class="sc">Financial Times</span><span class="sc">Google News</span><span class="sc">@KobeissiLetter</span><span class="sc">@zerohedge</span><span class="sc">@DeItaone</span></div></div>
+<footer class="footer">NEXUS v3 — 38 RSS feeds from 15+ sources · Forex Factory economic calendar · FinancialJuice squawk · Auto-refresh 60s · No API keys</footer>
+<script>
+const PROXIES=[u=>`https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,u=>`https://corsproxy.io/?url=${encodeURIComponent(u)}`,u=>`https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(u)}`,u=>`https://api.allorigins.win/get?url=${encodeURIComponent(u)}`];
+const FJ_RSS='https://www.financialjuice.com/feed.ashx?xy=rss';
+const FF_CAL='https://nfs.faireconomy.media/ff_calendar_thisweek.json';
+const RSS_FEEDS=[
+// === TIER 1: Major Wire Services ===
+{name:'Reuters Business',url:'https://feeds.reuters.com/reuters/businessNews',cat:'markets',src:'Reuters'},
+{name:'Reuters World',url:'https://feeds.reuters.com/Reuters/worldNews',cat:'geopolitics',src:'Reuters'},
+{name:'Reuters Markets',url:'https://feeds.reuters.com/reuters/companyNews',cat:'markets',src:'Reuters'},
+// === TIER 2: Financial Networks ===
+{name:'CNBC Top',url:'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100003114',cat:'markets',src:'CNBC'},
+{name:'CNBC World',url:'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=100727362',cat:'geopolitics',src:'CNBC'},
+{name:'CNBC Economy',url:'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=20910258',cat:'economy',src:'CNBC'},
+{name:'CNBC Finance',url:'https://search.cnbc.com/rs/search/combinedcms/view.xml?partnerId=wrss01&id=10000664',cat:'markets',src:'CNBC'},
+{name:'MarketWatch Top',url:'https://feeds.marketwatch.com/marketwatch/topstories/',cat:'markets',src:'MarketWatch'},
+{name:'MarketWatch Pulse',url:'https://feeds.marketwatch.com/marketwatch/marketpulse/',cat:'markets',src:'MarketWatch'},
+{name:'Yahoo Finance',url:'https://feeds.finance.yahoo.com/rss/2.0/headline?s=^GSPC&region=US&lang=en-US',cat:'markets',src:'Yahoo Finance'},
+// === TIER 3: Investing & Analysis ===
+{name:'Investing.com News',url:'https://www.investing.com/rss/news.rss',cat:'markets',src:'Investing.com'},
+{name:'Investing.com Analysis',url:'https://www.investing.com/rss/news_301.rss',cat:'markets',src:'Investing.com'},
+{name:'Seeking Alpha',url:'https://seekingalpha.com/market_currents.xml',cat:'markets',src:'Seeking Alpha'},
+{name:'ForexLive',url:'https://www.forexlive.com/feed',cat:'markets',src:'ForexLive'},
+// === TIER 4: Central Banks & Institutions ===
+{name:'Federal Reserve',url:'https://www.federalreserve.gov/feeds/press_all.xml',cat:'economy',src:'Federal Reserve'},
+{name:'ECB Press',url:'https://www.ecb.europa.eu/rss/press.html',cat:'economy',src:'ECB'},
+// === TIER 5: Broadcast & Wire ===
+{name:'BBC Business',url:'https://feeds.bbci.co.uk/news/business/rss.xml',cat:'economy',src:'BBC'},
+{name:'BBC World',url:'https://feeds.bbci.co.uk/news/world/rss.xml',cat:'geopolitics',src:'BBC'},
+{name:'CNN Business',url:'https://rss.cnn.com/rss/money_latest.rss',cat:'markets',src:'CNN'},
+{name:'Al Jazeera',url:'https://www.aljazeera.com/xml/rss/all.xml',cat:'geopolitics',src:'Al Jazeera'},
+{name:'FT Home',url:'https://www.ft.com/rss/home',cat:'markets',src:'Financial Times'},
+// === TIER 6: Google News Targeted ===
+{name:'G: Geopolitics',url:'https://news.google.com/rss/search?q=geopolitics+sanctions+trade+war+tariffs+military+conflict&hl=en&gl=US&ceid=US:en',cat:'geopolitics',src:'Google News'},
+{name:'G: Economy',url:'https://news.google.com/rss/search?q=economy+inflation+GDP+interest+rates+federal+reserve+CPI&hl=en&gl=US&ceid=US:en',cat:'economy',src:'Google News'},
+{name:'G: Stocks',url:'https://news.google.com/rss/search?q=stock+market+nasdaq+SP500+earnings+wall+street&hl=en&gl=US&ceid=US:en',cat:'markets',src:'Google News'},
+{name:'G: Central Banks',url:'https://news.google.com/rss/search?q=federal+reserve+ECB+BOE+rate+decision+monetary+policy&hl=en&gl=US&ceid=US:en',cat:'economy',src:'Google News'},
+{name:'G: Forex',url:'https://news.google.com/rss/search?q=forex+dollar+euro+yen+currency+exchange+rate&hl=en&gl=US&ceid=US:en',cat:'markets',src:'Google News'},
+{name:'G: India Pakistan',url:'https://news.google.com/rss/search?q=india+pakistan+geopolitics+kashmir+military&hl=en&gl=US&ceid=US:en',cat:'geopolitics',src:'Google News'},
+{name:'G: China US',url:'https://news.google.com/rss/search?q=china+united+states+trade+tariff+tension&hl=en&gl=US&ceid=US:en',cat:'geopolitics',src:'Google News'},
+{name:'G: Middle East',url:'https://news.google.com/rss/search?q=middle+east+iran+israel+oil+conflict&hl=en&gl=US&ceid=US:en',cat:'geopolitics',src:'Google News'},
+{name:'G: Europe',url:'https://news.google.com/rss/search?q=europe+EU+economy+germany+france+UK&hl=en&gl=US&ceid=US:en',cat:'economy',src:'Google News'},
+{name:'G: IPO M&A',url:'https://news.google.com/rss/search?q=IPO+merger+acquisition+deal+buyout&hl=en&gl=US&ceid=US:en',cat:'markets',src:'Google News'},
+{name:'G: Housing Jobs',url:'https://news.google.com/rss/search?q=housing+market+jobs+report+unemployment+employment&hl=en&gl=US&ceid=US:en',cat:'economy',src:'Google News'},
+{name:'G: Earnings',url:'https://news.google.com/rss/search?q=earnings+report+revenue+profit+quarterly+results&hl=en&gl=US&ceid=US:en',cat:'markets',src:'Google News'},
+{name:'G: Russia Ukraine',url:'https://news.google.com/rss/search?q=russia+ukraine+war+sanctions+NATO&hl=en&gl=US&ceid=US:en',cat:'geopolitics',src:'Google News'},
+{name:'G: Oil Gold',url:'https://news.google.com/rss/search?q=oil+price+gold+price+commodities&hl=en&gl=US&ceid=US:en',cat:'markets',src:'Google News'},
+{name:'G: Treasury Bonds',url:'https://news.google.com/rss/search?q=treasury+bonds+yield+curve+debt+ceiling&hl=en&gl=US&ceid=US:en',cat:'economy',src:'Google News'},
+{name:'G: Tech Stocks',url:'https://news.google.com/rss/search?q=NVDA+AAPL+MSFT+GOOG+META+tech+stock+AI&hl=en&gl=US&ceid=US:en',cat:'markets',src:'Google News'},
+{name:'G: Asia Markets',url:'https://news.google.com/rss/search?q=asia+markets+nikkei+hang+seng+china+japan+economy&hl=en&gl=US&ceid=US:en',cat:'markets',src:'Google News'},
+];
+const X_ACCOUNTS=[{h:'@KobeissiLetter',d:'Macro analysis'},{h:'@zerohedge',d:'Markets & geopolitics'},{h:'@DeItaone',d:'Fastest headlines'},{h:'@WatcherGuru',d:'Crypto & finance'},{h:'@unusual_whales',d:'Options flow'}];
+const NITTER=['https://nitter.poast.org','https://nitter.privacydev.net','https://nitter.net'];
+const CATS=[{id:'all',label:'ALL',icon:'◉'},{id:'geopolitics',label:'GEOPOLITICS',icon:'🌐'},{id:'markets',label:'MARKETS',icon:'📈'},{id:'economy',label:'ECONOMY',icon:'🏦'}];
+let allArticles=[],activeTab='all',feedSources=new Set(),searchQuery='',seenIds=new Set(),sqItems=[],econEvents=[];
+
+// UTILS
+function timeAgo(d){const s=Math.floor((Date.now()-d)/1000);if(s<0)return'now';if(s<60)return s+'s';if(s<3600)return Math.floor(s/60)+'m';if(s<86400)return Math.floor(s/3600)+'h';return Math.floor(s/86400)+'d'}
+function strip(h){const d=document.createElement('div');d.innerHTML=h;return d.textContent||''}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+function hash(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0}return Math.abs(h)}
+const KW={geo:['sanction','war','military','nato','geopolit','conflict','border','nuclear','treaty','diplomat','invasion','ceasefire','missile','weapon','troops','tariff','trade war','embargo','putin','trump','iran','russia','ukraine','taiwan','india','pakistan','china','middle east','israel'],mkt:['stock','s&p','nasdaq','dow','rally','sell-off','earnings','ipo','shares','equity','bull','bear','wall street','trading','investor','etf','index','options','futures','merger','acquisition'],eco:['inflation','gdp','interest rate','fed ','federal reserve','central bank','unemployment','recession','cpi','ppi','jobs report','payroll','treasury','rate cut','rate hike','boe','ecb','boj','pmi','retail sales','housing','mortgage','consumer confidence']};
+function classify(t){t=t.toLowerCase();const sc={geopolitics:0,markets:0,economy:0};Object.entries(KW).forEach(([k,ws])=>{const cat=k==='geo'?'geopolitics':k==='mkt'?'markets':'economy';ws.forEach(w=>{if(t.includes(w))sc[cat]+=2})});const mx=Math.max(...Object.values(sc));return mx===0?'markets':Object.keys(sc).find(k=>sc[k]===mx)}
+function sentiment(t){t=t.toLowerCase();let b=0,r=0;['surge','rally','rise','gain','record high','boom','soar','bullish','recovery','growth','profit','upgrade','beat','positive','climb','jump','breakout'].forEach(k=>{if(t.includes(k))b++});['crash','plunge','fall','drop','decline','slump','bearish','recession','crisis','loss','sell-off','downgrade','miss','fear','negative','collapse','tumble','plummet','warning'].forEach(k=>{if(t.includes(k))r++});return b>r?'bullish':r>b?'bearish':'neutral'}
+function impact(t){t=t.toLowerCase();let h=0;['breaking','urgent','crisis','war','crash','record','emergency','historic','sanction','nuclear','collapse','surge','plunge','shock','invasion','attack'].forEach(k=>{if(t.includes(k))h++});return h>=2?'high':h>=1?'medium':'low'}
+function findAssets(t){t=t.toUpperCase();return['S&P 500','NASDAQ','DOW','FTSE','DAX','NIKKEI','GOLD','OIL','WTI','BRENT','EUR/USD','GBP/USD','USD/JPY','SILVER','COPPER','VIX','TSLA','AAPL','NVDA','MSFT','OPEC'].filter(x=>t.includes(x)).slice(0,4)}
+function makeAI(t,c,s){const p={geopolitics:['Safe-haven flows likely — watch gold, USD, treasuries, defense stocks.','Energy supply chains impacted first, then broader volatility 1-2 weeks.','Trade realignment reshapes supply chains 3-6 months.'],markets:[`Smart money ${s==='bullish'?'accumulating':'distributing'}. Options skew confirms.`,`${s==='bullish'?'Breakout 65%':'Mean reversion 2-3 sessions'} probability.`,'Cross-asset correlations shifting — watch bond-equity ratios.'],economy:['Rate probability matrix shifted. Watch 2s/10s curve.',(s==='bullish'?'Risk-on rally':'Defensive rotation')+' historically follows.','Headline vs core divergence reveals structural pressures.']};const x=p[c]||p.markets;return x[hash(t)%x.length]}
+
+// FETCH
+async function fetchP(url,to=10000){for(const mk of PROXIES){try{const purl=mk(url);const r=await fetch(purl,{signal:AbortSignal.timeout(to)});if(!r.ok)continue;const t=await r.text();if(!t||t.length<50)continue;if(purl.includes('allorigins.win/get')){try{const j=JSON.parse(t);if(j.contents&&j.contents.length>50)return j.contents}catch(e){continue}}return t}catch(e){continue}}return null}
+async function fetchRSS2JSON(url,count=20){try{const r=await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(url)}&count=${count}`,{signal:AbortSignal.timeout(8000)});if(!r.ok)return null;const j=await r.json();if(j.status==='ok'&&j.items)return j.items}catch(e){}return null}
+
+// ============ REAL ECONOMIC CALENDAR — Forex Factory ============
+async function fetchEconCalendar(){
+  let data=null;
+  // Try rss2json won't work for JSON, use CORS proxy
+  const txt=await fetchP(FF_CAL);
+  if(txt){
+    try{
+      // Check if it's HTML (rate limited) or JSON
+      if(txt.trim().startsWith('[')|| txt.trim().startsWith('{')){
+        data=JSON.parse(txt);
+      }
+    }catch(e){}
+  }
+  if(!data){
+    // Fallback: try direct fetch (some browsers allow it)
+    try{const r=await fetch(FF_CAL,{signal:AbortSignal.timeout(5000)});if(r.ok){data=await r.json()}}catch(e){}
+  }
+  if(data&&Array.isArray(data)){
+    econEvents=data.filter(e=>e.impact==='High'||e.impact==='Medium').slice(0,25);
+    renderEconCal();
+    document.getElementById('ecPill').textContent='LIVE';
+  }
+}
+
+function renderEconCal(){
+  if(!econEvents.length){document.getElementById('econCal').innerHTML='<div class="empty">No calendar data</div>';return}
+  const now=new Date();
+  document.getElementById('econCal').innerHTML=econEvents.map(ev=>{
+    const evDate=new Date(ev.date);
+    const isPast=evDate<now;
+    const hasActual=ev.actual&&ev.actual.trim()!=='';
+    const hasForecast=ev.forecast&&ev.forecast.trim()!=='';
+    const hasPrevious=ev.previous&&ev.previous.trim()!=='';
+    // Determine if actual is better/worse than forecast
+    let actualClass='pending';
+    if(hasActual&&hasForecast){
+      const a=parseFloat(ev.actual.replace(/[^0-9.\-]/g,''));
+      const f=parseFloat(ev.forecast.replace(/[^0-9.\-]/g,''));
+      if(!isNaN(a)&&!isNaN(f)){
+        const lowerBetter=/unemployment|jobless|claims/i.test(ev.title);
+        actualClass=lowerBetter?(a<f?'better':a>f?'worse':'pending'):(a>f?'better':a<f?'worse':'pending');
+      }
+    }
+    const releasedBadge=hasActual&&ev.impact==='High'?'<span class="econ-released">⚡ RELEASED</span>':'';
+    const pendingBadge=!hasActual&&!isPast?'<span style="font-size:8px;color:var(--amber);font-family:JetBrains Mono;font-weight:600">⏳ UPCOMING</span>':'';
+    const dayStr=evDate.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+    const timeStr=evDate.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    const flag=ev.country||'';
+    return `<div class="econ-ev">
+      <div class="econ-co"><span class="econ-imp ${ev.impact}"></span>${flag} ${releasedBadge}${pendingBadge}</div>
+      <div class="econ-top"><span class="econ-name">${esc(ev.title||'')}</span><span class="econ-time">${dayStr} ${timeStr}</span></div>
+      <div class="econ-data">
+        <div class="econ-cell"><div class="econ-cl">Forecast</div><div class="econ-cv">${hasForecast?esc(ev.forecast):'—'}</div></div>
+        <div class="econ-cell"><div class="econ-cl">Actual</div><div class="econ-cv ${actualClass}">${hasActual?esc(ev.actual):'—'}</div></div>
+        <div class="econ-cell"><div class="econ-cl">Previous</div><div class="econ-cv">${hasPrevious?esc(ev.previous):'—'}</div></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ============ SQUAWK — FinancialJuice ============
+async function fetchSquawk(){
+  let items=[];
+  const rssItems=await fetchRSS2JSON(FJ_RSS,30);
+  if(rssItems&&rssItems.length>0){
+    rssItems.forEach(item=>{
+      let title=(item.title||'').trim().replace(/^FinancialJuice:\s*/i,'');if(!title)return;
+      const date=item.pubDate?new Date(item.pubDate):new Date();
+      const id=item.guid||hash(title);const isHigh=impact(title)==='high';
+      const isEcon=/actual|forecast|consensus|beats|misses|comes in at|vs\.|expected|bps/i.test(title);
+      const isNew=!seenIds.has('sq_'+id);if(isNew)seenIds.add('sq_'+id);
+      items.push({id,title,date,isHigh,isEcon,isNew});
+    });
+  }
+  if(items.length===0){
+    const txt=await fetchP(FJ_RSS);
+    if(txt&&!txt.includes('<!DOCTYPE')){try{const doc=new DOMParser().parseFromString(txt,'text/xml');if(!doc.querySelector('parsererror')){doc.querySelectorAll('item').forEach((item,i)=>{if(i>=30)return;let title=item.querySelector('title')?.textContent?.trim()||'';title=title.replace(/^FinancialJuice:\s*/i,'');if(!title)return;const pd=item.querySelector('pubDate')?.textContent||'';const date=pd?new Date(pd):new Date();const id=item.querySelector('guid')?.textContent||hash(title);const isNew=!seenIds.has('sq_'+id);if(isNew)seenIds.add('sq_'+id);items.push({id,title,date,isHigh:impact(title)==='high',isEcon:/actual|forecast|beats|misses|vs\./i.test(title),isNew})})}}catch(e){}}
+  }
+  if(items.length===0){
+    const gItems=await fetchRSS2JSON('https://news.google.com/rss/search?q=breaking+financial+market+news&hl=en&gl=US&ceid=US:en',15);
+    if(gItems)gItems.forEach(item=>{const title=(item.title||'').trim();if(!title)return;const date=item.pubDate?new Date(item.pubDate):new Date();const id=hash(title+'gn');const isNew=!seenIds.has('sq_'+id);if(isNew)seenIds.add('sq_'+id);items.push({id,title,date,isHigh:impact(title)==='high',isEcon:false,isNew})});
+  }
+  if(items.length>0){sqItems=items;renderSquawk()}
+}
+function renderSquawk(){
+  document.getElementById('sqCount').textContent=sqItems.length+' headlines';
+  if(!sqItems.length){document.getElementById('squawkFeed').innerHTML='<div class="empty">Connecting... (retrying every 30s)</div>';return}
+  document.getElementById('squawkFeed').innerHTML=sqItems.map(s=>{
+    const cls=['sq-item'];if(s.isHigh)cls.push('hi');if(s.isNew)cls.push('new');
+    return`<div class="${cls.join(' ')}"><span class="sq-time">${timeAgo(s.date)}</span><span class="sq-text">${s.isHigh?'<span class="sq-alert">🚨</span>':''}${s.isEcon?'<span class="sq-econ">📊</span>':''}${esc(s.title)}</span></div>`;
+  }).join('');
+}
+
+// ============ NEWS FEEDS — FAST DUAL-PATH ============
+// Try rss2json first (fast, no CORS), fallback to CORS proxy
+async function fetchFeed(feed){
+  // METHOD 1: rss2json (fastest — direct API, no proxy)
+  try{
+    const items=await fetchRSS2JSON(feed.url,15);
+    if(items&&items.length>0){
+      const out=[];
+      items.forEach(item=>{
+        const title=(item.title||'').trim();if(!title||title.length<10)return;
+        const desc=strip(item.description||'').slice(0,400);
+        const link=item.link||'';
+        const date=item.pubDate?new Date(item.pubDate):new Date();
+        if(isNaN(date.getTime())||Date.now()-date.getTime()>172800000)return;
+        const full=title+' '+desc;const cat=feed.cat||classify(full);const s=sentiment(full);
+        const id=hash(title+feed.src);seenIds.add(id);
+        out.push({id,title,desc,link,date,cat,sent:s,impact:impact(full),assets:findAssets(full),src:feed.src,feedName:feed.name,ai:makeAI(title,cat,s)});
+      });
+      if(out.length>0){feedSources.add(feed.src);return out}
+    }
+  }catch(e){}
+  // METHOD 2: CORS proxy fallback
+  try{
+    const txt=await fetchP(feed.url,6000);if(!txt)return[];
+    const doc=new DOMParser().parseFromString(txt,'text/xml');if(doc.querySelector('parsererror'))return[];
+    const items=doc.querySelectorAll('item, entry');const out=[];
+    items.forEach((item,i)=>{if(i>=12)return;const title=item.querySelector('title')?.textContent?.trim()||'';if(!title||title.length<10)return;const desc=strip(item.querySelector('description, summary, content')?.textContent||'').slice(0,400);let link=item.querySelector('link')?.textContent?.trim()||item.querySelector('link')?.getAttribute('href')||'';const pd=item.querySelector('pubDate, published, updated')?.textContent||'';const date=pd?new Date(pd):new Date();if(isNaN(date.getTime())||Date.now()-date.getTime()>172800000)return;const full=title+' '+desc;const cat=feed.cat||classify(full);const s=sentiment(full);const id=hash(title+feed.src);seenIds.add(id);out.push({id,title,desc,link,date,cat,sent:s,impact:impact(full),assets:findAssets(full),src:feed.src,feedName:feed.name,ai:makeAI(title,cat,s)})});
+    feedSources.add(feed.src);return out;
+  }catch(e){return[]}
+}
+
+// Merge new articles into allArticles without duplicates
+function mergeArticles(newArts){
+  const seen=new Set();
+  allArticles.forEach(a=>seen.add(a.title.toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,50)));
+  newArts.forEach(a=>{const k=a.title.toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,50);if(!seen.has(k)){seen.add(k);allArticles.push(a)}});
+  allArticles.sort((a,b)=>b.date-a.date);
+}
+
+// Load in waves — show results fast, keep loading more in background
+async function loadInWaves(){
+  // WAVE 1: Priority feeds (fastest sources) — show results in ~3-5 seconds
+  const wave1=RSS_FEEDS.filter(f=>['Reuters','CNBC','BBC','MarketWatch'].includes(f.src));
+  const res1=await Promise.allSettled(wave1.map(f=>fetchFeed(f)));
+  const arts1=[];res1.forEach(r=>{if(r.status==='fulfilled'&&r.value)arts1.push(...r.value)});
+  mergeArticles(arts1);
+  renderNav();renderFeed();renderRadar();
+  // Hide loader after wave 1
+  const l=document.getElementById('loader');l.classList.add('hidden');setTimeout(()=>l.style.display='none',600);
+
+  // WAVE 2: Secondary sources — loads in background
+  const wave2=RSS_FEEDS.filter(f=>['Yahoo Finance','Investing.com','Seeking Alpha','ForexLive','CNN','Al Jazeera','Financial Times'].includes(f.src));
+  const res2=await Promise.allSettled(wave2.map(f=>fetchFeed(f)));
+  const arts2=[];res2.forEach(r=>{if(r.status==='fulfilled'&&r.value)arts2.push(...r.value)});
+  mergeArticles(arts2);
+  renderNav();renderFeed();renderRadar();
+
+  // WAVE 3: Institutional + Google News — background
+  const wave3=RSS_FEEDS.filter(f=>['Google News','Federal Reserve','ECB'].includes(f.src));
+  // Batch Google News in chunks of 5 to avoid overwhelming rss2json
+  for(let i=0;i<wave3.length;i+=5){
+    const chunk=wave3.slice(i,i+5);
+    const res3=await Promise.allSettled(chunk.map(f=>fetchFeed(f)));
+    const arts3=[];res3.forEach(r=>{if(r.status==='fulfilled'&&r.value)arts3.push(...r.value)});
+    mergeArticles(arts3);
+    renderNav();renderFeed();renderRadar();
+  }
+  
+  // Cache in sessionStorage for instant reload
+  try{sessionStorage.setItem('nexus_cache',JSON.stringify({ts:Date.now(),articles:allArticles.slice(0,150)}))}catch(e){}
+}
+
+// ============ X FEED ============
+async function renderXFeed(){const c=document.getElementById('xFeed');let tw=[];for(const acc of X_ACCOUNTS){const h=acc.h.replace('@','');let ok=false;for(const inst of NITTER){try{const txt=await fetchP(`${inst}/${h}/rss`,4000);if(!txt||txt.includes('<!DOCTYPE'))continue;const doc=new DOMParser().parseFromString(txt,'text/xml');const items=doc.querySelectorAll('item, entry');if(!items.length)continue;items.forEach((item,i)=>{if(i>=3)return;const t=strip(item.querySelector('title')?.textContent||'');const link=item.querySelector('link')?.textContent?.trim()||'';const pd=item.querySelector('pubDate, published')?.textContent||'';tw.push({h:acc.h,text:t.slice(0,280),link,date:pd?new Date(pd):new Date()})});ok=true;break}catch(e){continue}}if(!ok)tw.push({h:acc.h,text:acc.d+' — Follow for updates',link:`https://x.com/${h}`,date:new Date()})}tw.sort((a,b)=>b.date-a.date);c.innerHTML=tw.slice(0,12).map(t=>`<div class="x-item"><div class="x-h">${t.h}</div><div class="x-t">${esc(t.text)}</div><div style="display:flex;gap:8px;margin-top:3px"><span style="font-family:JetBrains Mono;font-size:9px;color:var(--tx3)">${timeAgo(t.date)}</span>${t.link?`<a href="${t.link}" target="_blank" style="color:var(--blue);font-size:10px">View→</a>`:''}</div></div>`).join('')}
+
+// ============ RENDERERS ============
+function renderNav(){const c={all:allArticles.length};CATS.forEach(x=>{if(x.id!=='all')c[x.id]=allArticles.filter(a=>a.cat===x.id).length});document.getElementById('navTabs').innerHTML=CATS.map(x=>`<div class="tab${activeTab===x.id?' active':''}" onclick="setTab('${x.id}')">${x.icon} ${x.label} <span class="cnt">${c[x.id]||0}</span></div>`).join('')}
+function getFiltered(){let l=activeTab==='all'?allArticles:allArticles.filter(a=>a.cat===activeTab);if(searchQuery){const q=searchQuery.toLowerCase();l=l.filter(a=>(a.title+' '+a.desc+' '+a.assets.join(' ')+' '+a.src).toLowerCase().includes(q))}return l}
+function renderFeed(){const f=getFiltered();if(!f.length){document.getElementById('newsContainer').innerHTML='<div class="empty">No articles found.</div>';return}document.getElementById('newsContainer').innerHTML=f.slice(0,60).map(a=>{const ic=a.impact==='high'?'imp-high':a.impact==='medium'?'imp-med':'imp-low';const ib=a.impact==='high'?'b-hi':a.impact==='medium'?'b-md':'b-lo';const sc=a.sent==='bullish'?'bull':a.sent==='bearish'?'bear':'neut';const si=a.sent==='bullish'?'▲':a.sent==='bearish'?'▼':'◆';return`<article class="card ${ic}" id="c${a.id}" onclick="toggleCard(${a.id})"><div class="card-row"><div class="badges"><span class="b b-cat">${a.cat.toUpperCase()}</span><span class="b ${ib}">${a.impact.toUpperCase()}</span></div><span class="card-time">${timeAgo(a.date)}</span></div><div class="card-title">${esc(a.title)}</div><div class="card-src">via <span class="sn">${esc(a.src)}</span> · ${a.feedName}</div><div class="card-sent ${sc}">${si} ${a.sent.toUpperCase()}</div>${a.assets.length?`<div class="card-tags">${a.assets.map(t=>`<span class="tag">${t}</span>`).join('')}</div>`:''}<div class="card-body"><div class="card-summary">${esc(a.desc)}</div>${a.link?`<a class="card-link" href="${a.link}" target="_blank">Read full article →</a>`:''}<div class="ai-box"><div class="ai-head">🤖 AI IMPACT</div><div class="ai-txt">${a.ai}</div></div></div></article>`}).join('')}
+function renderRadar(){const cats=['geopolitics','markets','economy'];document.getElementById('radar').innerHTML=cats.map(c=>{const items=allArticles.filter(a=>a.cat===c);const bu=items.filter(a=>a.sent==='bullish').length;const be=items.filter(a=>a.sent==='bearish').length;const tot=items.length;const sl=bu>be?'BULL':be>bu?'BEAR':'MIX';const scl=bu>be?'var(--green)':be>bu?'var(--red)':'var(--tx3)';return`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--tx2)">${c}</span><span style="font-size:9px;font-weight:600;color:${scl};font-family:JetBrains Mono">${sl}</span></div><div style="display:flex;gap:3px;align-items:center"><div style="flex:1;height:5px;background:var(--bg4);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.min(tot*5,100)}%;background:linear-gradient(90deg,var(--blue),var(--cyan));border-radius:3px"></div></div><span style="font-family:JetBrains Mono;font-size:9px;color:var(--tx3)">${tot}</span></div></div>`}).join('')}
+
+// ============ INTERACTIONS ============
+function toggleCard(id){const el=document.getElementById('c'+id);if(el)el.classList.toggle('open')}
+function handleSearch(){searchQuery=document.getElementById('searchInput').value;renderFeed()}
+let tabLoading=false;
+async function setTab(id){activeTab=id;renderNav();renderFeed();if(!tabLoading){tabLoading=true;document.getElementById('refreshBtn').classList.add('spin');await loadCat(id);renderNav();renderFeed();renderRadar();document.getElementById('refreshBtn').classList.remove('spin');tabLoading=false}}
+
+async function loadCat(cat){
+  const feeds=cat==='all'?RSS_FEEDS:RSS_FEEDS.filter(f=>f.cat===cat);if(!feeds.length)return;
+  // Only fetch first 10 feeds for category refresh (speed)
+  const limited=feeds.slice(0,10);
+  const res=await Promise.allSettled(limited.map(f=>fetchFeed(f)));
+  const na=[];res.forEach(r=>{if(r.status==='fulfilled'&&r.value)na.push(...r.value)});
+  const seen=new Set();const kept=cat==='all'?[]:allArticles.filter(a=>a.cat!==cat);
+  kept.forEach(a=>seen.add(a.title.toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,50)));
+  na.forEach(a=>{const k=a.title.toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,50);if(!seen.has(k)){seen.add(k);kept.push(a)}});
+  kept.sort((a,b)=>b.date-a.date);allArticles=kept;
+}
+
+async function refreshAll(){const b=document.getElementById('refreshBtn');b.classList.add('spin');await Promise.all([loadCat(activeTab),fetchSquawk()]);renderNav();renderFeed();renderRadar();if(activeTab==='all')renderXFeed();setTimeout(()=>b.classList.remove('spin'),500)}
+
+function updateClock(){document.getElementById('clock').textContent=new Date().toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false,timeZoneName:'short'})}
+
+async function init(){
+  updateClock();setInterval(updateClock,1000);
+  
+  // Try loading from cache first for instant display
+  try{
+    const cache=JSON.parse(sessionStorage.getItem('nexus_cache')||'null');
+    if(cache&&cache.articles&&cache.articles.length>0&&(Date.now()-cache.ts)<600000){
+      allArticles=cache.articles.map(a=>({...a,date:new Date(a.date)}));
+      renderNav();renderFeed();renderRadar();
+      document.getElementById('loader').classList.add('hidden');
+    }
+  }catch(e){}
+  
+  // Start loading fresh data (squawk + calendar first, they're fastest)
+  fetchSquawk();
+  fetchEconCalendar();
+  
+  // Then load news in waves
+  await loadInWaves();
+  
+  // X feed loads last (slowest, Nitter is unreliable)
+  renderXFeed();
+  
+  // Auto-refresh intervals
+  setInterval(fetchSquawk,30000);       // squawk every 30s
+  setInterval(refreshAll,120000);       // news every 2 min
+  setInterval(fetchEconCalendar,300000); // calendar every 5 min
+}
+init();
+</script>
+</body>
+</html>
